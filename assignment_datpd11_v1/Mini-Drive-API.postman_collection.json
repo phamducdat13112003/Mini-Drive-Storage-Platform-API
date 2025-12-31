@@ -1,0 +1,541 @@
+{
+	"info": {
+		"_postman_id": "mini-drive-api-collection",
+		"name": "Mini-Drive Storage Platform API",
+		"description": "Complete API collection for Mini-Drive Storage Platform with JWT Authentication",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Authentication",
+			"item": [
+				{
+					"name": "Register",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.success && jsonData.data && jsonData.data.token) {",
+									"        pm.environment.set(\"auth_token\", jsonData.data.token);",
+									"        pm.environment.set(\"user_id\", jsonData.data.userId);",
+									"        pm.environment.set(\"user_email\", jsonData.data.email);",
+									"        console.log(\"Token saved to environment\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\",\n    \"fullName\": \"Test User\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/register",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"register"
+							]
+						}
+					}
+				},
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"if (pm.response.code === 200) {",
+									"    var jsonData = pm.response.json();",
+									"    if (jsonData.success && jsonData.data && jsonData.data.token) {",
+									"        pm.environment.set(\"auth_token\", jsonData.data.token);",
+									"        pm.environment.set(\"user_id\", jsonData.data.userId);",
+									"        pm.environment.set(\"user_email\", jsonData.data.email);",
+									"        console.log(\"Token saved to environment\");",
+									"    }",
+									"}"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@example.com\",\n    \"password\": \"password123\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/auth/login",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"auth",
+								"login"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Files",
+			"item": [
+				{
+					"name": "List/Search Files",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/files?q=&type=&parentId=&fromSize=&toSize=",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files"
+							],
+							"query": [
+								{
+									"key": "q",
+									"value": "",
+									"description": "Search keyword"
+								},
+								{
+									"key": "type",
+									"value": "",
+									"description": "FILE, FOLDER, or MIME type"
+								},
+								{
+									"key": "parentId",
+									"value": "",
+									"description": "Parent folder ID"
+								},
+								{
+									"key": "fromSize",
+									"value": "",
+									"description": "Min size in bytes"
+								},
+								{
+									"key": "toSize",
+									"value": "",
+									"description": "Max size in bytes"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Upload Files",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "files",
+									"type": "file",
+									"src": []
+								},
+								{
+									"key": "parentId",
+									"value": "",
+									"type": "text",
+									"description": "Optional: Parent folder ID"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/files",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files"
+							]
+						}
+					}
+				},
+				{
+					"name": "Create Folder",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"name\": \"New Folder\",\n    \"parentId\": null,\n    \"type\": \"FOLDER\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/files",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files"
+							]
+						}
+					}
+				},
+				{
+					"name": "Download File",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/files/:id/download",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files",
+								":id",
+								"download"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "File ID"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Initiate Folder Download",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/files/:id/download",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files",
+								":id",
+								"download"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "Folder ID"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Check Download Status",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/files/downloads/:requestId",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files",
+								"downloads",
+								":requestId"
+							],
+							"variable": [
+								{
+									"key": "requestId",
+									"value": "",
+									"description": "Download request ID from initiate download"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Download ZIP File",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/files/downloads/:requestId/file",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files",
+								"downloads",
+								":requestId",
+								"file"
+							],
+							"variable": [
+								{
+									"key": "requestId",
+									"value": "",
+									"description": "Download request ID"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Delete File",
+					"request": {
+						"method": "DELETE",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/files/:id",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files",
+								":id"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "File/Folder ID"
+								}
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Sharing",
+			"item": [
+				{
+					"name": "Share File/Folder",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"recipient@example.com\",\n    \"permission\": \"VIEW\"\n}"
+						},
+						"url": {
+							"raw": "{{base_url}}/api/v1/files/:id/share",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files",
+								":id",
+								"share"
+							],
+							"variable": [
+								{
+									"key": "id",
+									"value": "",
+									"description": "File/Folder ID"
+								}
+							]
+						}
+					}
+				},
+				{
+					"name": "Get Shared With Me",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/files/shared-with-me",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"files",
+								"shared-with-me"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Analytics",
+			"item": [
+				{
+					"name": "Get Usage Stats",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{auth_token}}"
+							}
+						],
+						"url": {
+							"raw": "{{base_url}}/api/v1/analytics/usage",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"analytics",
+								"usage"
+							]
+						}
+					}
+				}
+			]
+		},
+		{
+			"name": "Debug",
+			"item": [
+				{
+					"name": "Generate Mock Data",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{base_url}}/api/v1/debug/generate-system",
+							"host": [
+								"{{base_url}}"
+							],
+							"path": [
+								"api",
+								"v1",
+								"debug",
+								"generate-system"
+							]
+						}
+					}
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					"// Auto-set Authorization header if token exists",
+					"if (pm.environment.get(\"auth_token\")) {",
+					"    pm.request.headers.add({",
+					"        key: \"Authorization\",",
+					"        value: \"Bearer \" + pm.environment.get(\"auth_token\")",
+					"    });",
+					"}"
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
+
